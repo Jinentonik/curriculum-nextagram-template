@@ -14,7 +14,7 @@ def new():
 @users_blueprint.route('/', methods=['POST'])
 def create():
     pass
-
+ 
 
 @users_blueprint.route('/<username>', methods=["GET"])
 def show(username):
