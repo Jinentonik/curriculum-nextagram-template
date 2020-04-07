@@ -2,6 +2,8 @@ from models.base_model import BaseModel
 import peewee as pw
 import re
 from werkzeug.security import generate_password_hash
+from flask_login import UserMixin, current_user, login_user
+
 
 def is_upper_case(word):
     arr = []
@@ -27,7 +29,7 @@ def no_special_case(word):
         return False
 
 
-class User(BaseModel):
+class User(UserMixin, BaseModel):
     name = pw.CharField(unique=False, null = False)
     email = pw.CharField(null = False)
     password = pw.TextField( null = False)
@@ -51,7 +53,9 @@ class User(BaseModel):
             self.errors.append("password must be 6 characters and above")
         else:
             self.password = generate_password_hash(self.password)
-        
+            # user = User.get(User.name == self.name)
+            # login_user(user)
+            
         
 
 

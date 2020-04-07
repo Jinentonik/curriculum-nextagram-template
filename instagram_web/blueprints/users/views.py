@@ -1,18 +1,24 @@
 
-from flask import Blueprint, render_template, request, flash
+from flask import Blueprint, render_template, request, flash, redirect, url_for, abort
 from models.user import User
+from flask_login import current_user, login_user
 
 
 
 users_blueprint = Blueprint('users',
                             __name__,
                             template_folder='templates')
-
+@users_blueprint.route('/')
+def index():
+    
+    return render_template('home.html')
 
 @users_blueprint.route('/new', methods=['GET'])
 def new():
-    return render_template('users/new.html')
-
+    if not current_user.is_authenticated:
+        return render_template('users/new.html')
+    else:
+        return redirect(url_for('users.index'))
 
 @users_blueprint.route('/receive-sign-up', methods=['POST'])
 def create():
@@ -24,7 +30,8 @@ def create():
     user = User(name = username_input, password = password_input, email = email_input)
     if user.save():
         flash(f"Account has been created successful")
-        return render_template('users/new.html')
+        login_user(user)
+        return redirect(url_for('users.index'))
         
     else:
         return render_template('users/new.html', errors = user.errors)
@@ -40,9 +47,9 @@ def show(username):
     pass
 
 
-@users_blueprint.route('/', methods=["GET"])
-def index():
-    return "USERS"
+# @users_blueprint.route('/', methods=["GET"])
+# def index():
+#     return "USERS"
 
 
 @users_blueprint.route('/<id>/edit', methods=['GET'])
