@@ -1,7 +1,7 @@
 from flask_wtf.csrf import CSRFProtect
 import os
 import config
-from flask import Flask
+from flask import Flask, request
 from models.base_model import db
 from flask_login import LoginManager
 from models.user import User
@@ -13,6 +13,8 @@ app = Flask('NEXTAGRAM', root_path=web_dir)
 csrf = CSRFProtect(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
+
+
 
 @login_manager.user_loader
 def load_user(id):
@@ -36,4 +38,5 @@ def _db_close(exc):
         print(db)
         print(db.close())
     return exc
+
 

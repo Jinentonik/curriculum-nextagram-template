@@ -3,7 +3,8 @@ import peewee as pw
 import re
 from werkzeug.security import generate_password_hash
 from flask_login import UserMixin, current_user, login_user
-
+from playhouse.hybrid import hybrid_property
+# from app import app
 
 def is_upper_case(word):
     arr = []
@@ -31,15 +32,26 @@ def no_special_case(word):
 
 class User(UserMixin, BaseModel):
     name = pw.CharField(unique=False, null = False)
-    email = pw.CharField(null = False)
-    password = pw.TextField( null = False)
+    email = pw.CharField(null = True)
+    password = pw.TextField( null = True)
+    profile_img = pw.CharField( null = True)
+
+    @hybrid_property
+    def profile_img_url(self):
+        from app import app
+        if self.profile_img == None:
+            return "#"
+        else:
+            return app.config.get('AWS_S3_DOMAIN') + self.profile_img
 
     def validate(self):
         duplicate_name = User.get_or_none(User.name == self.name)
         check_name_length = len(self.name)
         check_password_length = len(self.password)
+
+
         
-        if duplicate_name:
+        if duplicate_name and not duplicate_name.id == self.id:
             self.errors.append("This name has already exist.")
         if is_upper_case(self.password) == 0:
             self.errors.append("Password must have at least 1 upper case character.")

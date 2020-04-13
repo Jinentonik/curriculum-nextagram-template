@@ -18,10 +18,10 @@ class BaseModel(pw.Model):
         else:
             return 0
 
-    # def validate(self):
-    #     duplicate_name = User.get_or_none(User.name == self.name)
-    #     if duplicate_name:
-    #         self.errors.append("This name has already exist.")
+    def validate(self):
+        print(
+            f"Warning validation method not implemented for {str(type(self))}")
+        return True
     
         
         
