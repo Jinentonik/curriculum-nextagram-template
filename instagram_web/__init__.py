@@ -5,6 +5,11 @@ from instagram_web.blueprints.sessions.views import sessions_blueprint
 from instagram_web.blueprints.images.views import images_blueprint
 from flask_assets import Environment, Bundle
 from .util.assets import bundles
+import os
+from instagram_web.util.o_auth import oauth
+import config
+
+oauth.init_app(app)
 
 assets = Environment(app)
 assets.register(bundles)
