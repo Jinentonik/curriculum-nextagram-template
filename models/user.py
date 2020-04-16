@@ -43,6 +43,27 @@ class User(UserMixin, BaseModel):
             return "#"
         else:
             return app.config.get('AWS_S3_DOMAIN') + self.profile_img
+    
+    @hybrid_property
+    def follower(self):
+        from models.following import Following
+        return User.select().join(Following, on =(User.id == Following.follower_id)).where(Following.idol_id == self.id)
+
+    @hybrid_property
+    def following(self):
+        from models.following import Following
+        return User.select().join(Following, on =(User.id == Following.idol_id)).where(Following.follower_id == self.id)
+
+    @hybrid_property
+    def approved(self):
+        from models.following import Following
+        return User.select().join(Following, on =(User.id == Following.idol_id)).where((Following.follower_id == self.id) & (Following.approved == True))
+
+    @hybrid_property
+    def follower_request(self):
+        from models.following import Following
+        return User.select().join(Following, on =(User.id == Following.follower_id)).where((Following.idol_id == self.id) & (Following.approved == False))    
+
 
     def validate(self):
         duplicate_name = User.get_or_none(User.name == self.name)

@@ -9,6 +9,7 @@ import braintree
 import os
 from decimal import Decimal
 from instagram_web.util.email import send_message
+from models.following import Following
 
 gateway = braintree.BraintreeGateway(
     braintree.Configuration(
@@ -63,9 +64,11 @@ def create():
 def show(username):
     user = User.get(User.name == username)
     client_token = gateway.client_token.generate()
+    following_status = current_user.id in [u.id for u in user.follower] #following status for current user at other user's profile page.
+    approval_status = current_user.id in [u.id for u in user.approved]
     
     # if current_user == user:
-    return render_template('users/user_profile.html', user = user, client_token = client_token)
+    return render_template('users/user_profile.html', user = user, client_token = client_token, following_status = following_status, approval_status = approval_status)
     # else:
         # return redirect(url_for('users.index'))
 
