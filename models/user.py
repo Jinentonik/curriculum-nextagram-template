@@ -57,7 +57,7 @@ class User(UserMixin, BaseModel):
     @hybrid_property
     def approved(self):
         from models.following import Following
-        return User.select().join(Following, on =(User.id == Following.idol_id)).where((Following.follower_id == self.id) & (Following.approved == True))
+        return User.select().join(Following, on =(User.id == Following.follower_id)).where((Following.idol_id == self.id) & (Following.approved == True))
 
     @hybrid_property
     def follower_request(self):
